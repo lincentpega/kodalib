@@ -2,41 +2,53 @@ package com.kodalib.model;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Collection;
 
 @Entity
 @Table(name = "films")
-@Builder
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class Film {
-
-    public Film(String title) {
-        this.title = title;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "film_id", nullable = false, unique = true)
     private Integer id;
 
-    @Column(name = "title", nullable = false)
-    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "title", nullable = false, length = 256)
     private String title;
 
-    @Column(name = "date_create_note", nullable = false)
+    @Column(name = "duration_minutes")
+    private Integer duration;
+
+    @Column(name = "year")
+    private Short year;
+
+    @Column(name = "cash_success")
+    private Integer cashSuccess;
+
+    @Column(name = "date_creation", nullable = false)
     @CreationTimestamp
-    private LocalDateTime dateCreateNote;
+    private Instant dateCreation;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "films_actors",
+            joinColumns = @JoinColumn(name = "film_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    private Collection<Actor> actors;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "films_countries",
+            joinColumns = @JoinColumn(name = "film_id"),
+            inverseJoinColumns = @JoinColumn(name = "country_id")
+    )
+    private Collection<Country> countries;
 }

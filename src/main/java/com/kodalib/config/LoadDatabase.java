@@ -1,25 +1,32 @@
 package com.kodalib.config;
 
+import com.kodalib.model.Country;
 import com.kodalib.model.Film;
+import com.kodalib.repository.CountryRepository;
 import com.kodalib.repository.FilmRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 
+
+@Log4j2
 @Configuration
 public class LoadDatabase {
 
-    private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
+    private static FilmRepository filmRepository;
+    private static CountryRepository countryRepository;
 
     @Bean
-    CommandLineRunner initDatabase( FilmRepository filmRepository) {
+    CommandLineRunner initDatabase(FilmRepository filmRepository) {
         return args -> {
-            log.info("Preloading" + filmRepository.save(Film.builder().id(1).title("TestFilm1").dateCreateNote(LocalDateTime.now()).build()));
-            log.info("Preloading" + filmRepository.save(new Film("Pulp Fiction")));
+            var countries = new ArrayList<Country>();
+            countries.add(new Country(null, "USA", null));
+            log.info("Preloading" + filmRepository.save(
+                    Film.builder().title("Pulp Fiction").year((short) 1994).countries(countries).build()));
+//            countryRepository.save(new Country())
         };
     }
 }
